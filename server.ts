@@ -1,7 +1,7 @@
-import * as express from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import bcrypt 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 import { connectToDatabase } from './database';
 import AuthRoutes from './routes/AuthRoutes';
