@@ -5,22 +5,21 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
 
-try
-{
-	dotenv.config();
+import { connectToDatabase } from './database';
+import AuthRoutes from './routes/AuthRoutes';
 
-	const app = express();
-	const port = process.env.PORT || 3800;
+dotenv.config();
 
-	app.use(cors({ origin: 'https://localhost:19002' }));
+const app = express();
+connectToDatabase();
+const port = process.env.PORT || 3000;
 
-	app.use(bodyParser.json());
+app.use(cors({ origin: 'https://localhost:19002' }));
 
-	app.listen(port, () => {
-		console.log(`Backend Server listening on port ${port}`);
-	})
-}
-catch (error)
-{
-	console.error(error);
-}
+app.use(bodyParser.json());
+
+app.use(AuthRoutes);
+
+app.listen(port, () => {
+	console.log(`Backend Server listening on port ${port}`);
+})
