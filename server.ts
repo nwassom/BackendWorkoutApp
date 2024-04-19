@@ -1,7 +1,7 @@
 import * as express from 'express';
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import cors from 'cors';
+import bcrypt 'bcryptjs';
 
 import { connectToDatabase } from './database';
 import AuthRoutes from './routes/AuthRoutes';
