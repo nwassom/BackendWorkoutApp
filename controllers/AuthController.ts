@@ -6,6 +6,7 @@ import User, {IUser} from '../models/User';
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
 
+	console.log(req.body);
 	const { username, email, password, birthday, heightInches, weight, gender, goal } = req.body;
 
 	try 
