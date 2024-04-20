@@ -36,6 +36,7 @@ export const signup = async (req: Request, res: Response): Promise<Response> => 
 };
 
 export const login = async (req: Request, res: Response): Promise<Response> => {
+	console.log('login attempted');
 	console.log(req.body);
 
 	const { usernameOrEmail, password } = req.body;
