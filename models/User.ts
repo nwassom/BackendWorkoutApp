@@ -6,23 +6,22 @@ import mongoose, {Schema, Document } from 'mongoose';
 
 interface IExercise {
     name: string;
+    favorite: boolean;
     muscleGroup: string[];
     sets: number;
-    reps: number[];
-    weight: number[];
-    difficulty: number;
-}
+    reps: number;
+    weight: number;
+};
 
-interface IWorkout {
+// Define the workout object type
+export interface IWorkout {
     name: string;
-    time: Date;
-    difficulty: number;
-    favorite: boolean;
+    time: Date; // You can use a specific type for time if needed
     color: string;
     timesCompleted: number;
-    date: Date;
+    date: string; // You can use a specific type for date if needed
     exercises: IExercise[];
-}
+};
 
 export interface IUser extends Document {
     username: string;
@@ -48,18 +47,16 @@ const UserSchema: Schema = new Schema({
     workouts: [{
         name: String,
         time: { type: Date, default: Date.now },
-        difficulty: Number,
-        favorite: { type: Boolean, default: false },
         color: String,
+        favorite: { type: Boolean, default: false },
         timesCompleted: { type: Number, default: 0 },
-        date: { type: Date, default: Date.now },
+        date: String,
         exercises: [{
             name: String,
             muscleGroup: [String],
             sets: Number,
-            reps: [Number],
-            weight: [Number],
-            difficulty: Number,
+            reps: Number,
+            weight: Number,
         }],
     }],
 });

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 import User, {IUser} from '../models/User';
 
@@ -31,7 +30,7 @@ export const signup = async (req: Request, res: Response): Promise<Response> => 
 	catch (error)
 	{
 		console.error(error);
-		return res.status(500).json({success: false, message: 'Server error'});
+		return res.status(500).json({success: false, message: 'Server Signup error'});
 	}
 };
 
@@ -40,35 +39,42 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
 	console.log(req.body);
 
 	const { usernameOrEmail, password } = req.body;
-
-	const lowerCaseUsernameEmail = usernameOrEmail.toLowerCase();
-
-	const userByEmail: IUser | null = await User.findOne({ email: lowerCaseUsernameEmail });
-
-	if (userByEmail)
+	try
 	{
-		const isValidPassword = await bcrypt.compare(password, userByEmail.password);
-		if (isValidPassword)
+		const lowerCaseUsernameEmail = usernameOrEmail.toLowerCase();
+
+		const userByEmail: IUser | null = await User.findOne({ email: lowerCaseUsernameEmail });
+
+		if (userByEmail)
 		{
-			return res.status(200).json({success: true, message: 'Login successful', userByEmail});
+			const isValidPassword = await bcrypt.compare(password, userByEmail.password);
+			if (isValidPassword)
+			{
+				return res.status(200).json({success: true, message: 'Login successful', user: userByEmail});
+			}
 		}
+
+		const user: IUser | null = await User.findOne({
+			$or: [{ username: lowerCaseUsernameEmail }, { email: lowerCaseUsernameEmail }],
+		});
+
+		console.log(user);
+		if (!user)
+		{
+			return res.status(400).json({success: false, message: 'Invalid Username'});
+		}
+
+		const isValidPassword = await bcrypt.compare(password, user.password);
+		if (!isValidPassword)
+		{
+			return res.status(400).json({success: false, message: 'Invalid Password'});
+		}
+
+		return res.status(200).json({success: true, message: 'Login successful', user});
 	}
-
-	const user: IUser | null = await User.findOne({
-		$or: [{ username: lowerCaseUsernameEmail }, { email: lowerCaseUsernameEmail }],
-	});
-
-	console.log(user);
-	if (!user)
+	catch (error)
 	{
-		return res.status(400).json({success: false, message: 'Invalid Username'});
+		console.error(error);
+		return res.status(500).json({success: false, message: 'Server Login error'});
 	}
-
-	const isValidPassword = await bcrypt.compare(password, user.password);
-	if (!isValidPassword)
-	{
-		return res.status(400).json({success: false, message: 'Invalid Password'});
-	}
-
-	return res.status(200).json({success: true, message: 'Login successful', user});
 };
